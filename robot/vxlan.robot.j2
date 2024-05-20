@@ -1,0 +1,28 @@
+*** Settings ***
+# Importing test libraries, resource files and variable files.
+Library        ats.robot.pyATSRobot
+Library        genie.libs.robot.GenieRobot
+Library        unicon.robot.UniconRobot
+
+*** Variables ***
+${testbed}      testbeds/{{ env }}.yaml
+@{vni_list}     {{ vni_list | join('  ')}}
+
+*** Test Cases ***
+
+Initialize
+    # Initializes the pyATS/Genie Testbed
+    use genie testbed "${testbed}"
+{% for device in devices %}
+    connect to device "{{ device.name }}"
+{% endfor %}
+
+verify vxlan status
+{% for device in devices %}
+    ${output}=   parse "show nve vni" on device "{{ device.name }}"
+    FOR    ${vni}    IN    @{vni_list}
+        Log         ${output['nve1']['vni'][${vni}]}
+        Run Keyword And Continue On Failure   Should Be Equal     ${output['nve1']['vni'][${vni}]['vni_state']}   up
+    END
+
+{% endfor %}

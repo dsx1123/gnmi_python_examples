@@ -1,0 +1,13 @@
+.switch_pass
+get.py
+*.swp
+__pycache__/
+.pytest_cache/
+
+# robot testfile
+./testbeds/*.yaml
+./testbeds/*.yml
+log.html
+output.xml
+report.html
+*.robot

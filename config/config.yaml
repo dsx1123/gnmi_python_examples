@@ -1,0 +1,38 @@
+---
+fabric:
+  overlay:
+    networks:
+      - name: network_web
+        vrf_name: vrf_blue
+        vni: 30021
+        vlan_id: 2201
+        gw_ip_address: 10.1.1.1/24
+        mcast_group: 239.1.1.1
+        attach_group: esxi
+      - name: network_app
+        vrf_name: vrf_blue
+        vni: 30022
+        vlan_id: 2202
+        gw_ip_address: 10.1.2.1/24
+        mcast_group: 239.1.1.2
+        attach_group: esxi
+      - name: network_db
+        vrf_name: vrf_blue
+        vni: 30023
+        vlan_id: 2203
+        gw_ip_address: 10.1.3.1/24
+        mcast_group: 239.1.1.3
+        attach_group: esxi
+    network_attach_groups:
+      - name: esxi
+        switches:
+          - node_id: 1001
+            ports:
+              - Ethernet1/1
+              - Ethernet1/2
+              - Ethernet1/3
+          - node_id: 1002
+            ports:
+              - Ethernet1/1
+              - Ethernet1/2
+              - Ethernet1/3

@@ -1,0 +1,16 @@
+testbed:
+  credentials:
+    default:
+      username: "%ENV{switch_username}"
+      password: "%ENV{switch_password}"
+
+devices:
+{% for device in devices %}
+  {{ device.name }}:
+    os: nxos
+    type: nxos
+    connections:
+      cli:
+        protocol: ssh
+        ip: {{ device.ip }}
+{% endfor %}

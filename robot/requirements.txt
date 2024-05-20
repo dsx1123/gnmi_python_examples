@@ -1,0 +1,6 @@
+robotframework==6.1.1
+genie
+pyats
+pyats.robot
+genie.libs.robot
+pyyaml

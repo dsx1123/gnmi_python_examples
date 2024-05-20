@@ -1,0 +1,111 @@
+---
+stages:
+  - review
+  - lint
+  - validate
+  - deploy
+  - verify
+
+review:stage:
+  stage: review
+  rules:
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  tags:
+    - docker
+    - nxos
+  script:
+    - echo "ENV=stage" >> review.env
+  artifacts:
+    reports:
+      dotenv: review.env
+
+
+review:prod:
+  stage: review
+  rules:
+    - if: '$CI_COMMIT_BRANCH== "main"'
+  tags:
+    - nxos
+  script:
+    - echo "ENV=prod" >> review.env
+  artifacts:
+    reports:
+      dotenv: review.env
+
+yamllint:
+  stage: lint
+  image:
+    name: cytopia/yamllint:1.26
+    entrypoint: [""]
+  rules:
+    - when: always
+  tags:
+    - docker
+    - nxos
+  script:
+    - yamllint -d relaxed ./config ./env
+
+flake8:
+  stage: lint
+  image: registry.gitlab.com/pipeline-components/flake8:latest
+  rules:
+    - when: always
+  tags:
+    - docker
+    - nxos
+  script:
+    - flake8 --verbose .
+
+validate:
+  stage: validate
+  image:
+    name: containers.cisco.com/shdu/python3:latest
+  rules:
+    - when: always
+  tags:
+    - docker
+    - nxos
+  script:
+    - python3 --version
+    - export proxy="http://proxy.esl.cisco.com:8080"
+    - python3 -m pip install -r requirements.txt --proxy $proxy
+    - python3 main.py validate
+
+deploy:
+  stage: deploy
+  image:
+    name: containers.cisco.com/shdu/python3:latest
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  tags:
+    - docker
+    - nxos
+  script:
+    - echo $ENV
+    - python3 --version
+    - export proxy="http://proxy.esl.cisco.com:8080"
+    - python3 -m pip install -r requirements.txt --proxy $proxy
+    - python3 main.py --env $ENV deploy
+
+verify:
+  stage: verify
+  image:
+    name: containers.cisco.com/shdu/python3:latest
+  rules:
+    - if: '$CI_COMMIT_BRANCH == "main"'
+    - if: '$CI_PIPELINE_SOURCE == "merge_request_event"'
+  tags:
+    - docker
+    - nxos
+  script:
+    - export proxy="http://proxy.esl.cisco.com:8080"
+    - python3 -m pip install -r robot/requirements.txt --proxy $proxy
+    - cd robot
+    - python3 render_robot.py -e $ENV
+    - robot vxlan.robot
+  artifacts:
+    paths:
+      - robot/report.html
+      - robot/log.html
+      - robot/output.xml

@@ -1,0 +1,37 @@
+fabric: include('fabric')
+---
+fabric:
+  topology: include('topology', required=False)
+  overlay: include('overlay', required=False)
+
+topology:
+  switches: list(include('topology_switch'), required=False)
+
+topology_switch:
+  name: str()
+  node_id: int(min=1, max=65535)
+  role: enum('spine', 'leaf', 'border', required=False)
+  management_ipv4_address: ip(version=4, required=False)
+  management_ipv6_address: ip(version=6, required=False)
+
+overlay:
+  networks: list(include('overlay_network', required=False))
+  network_attach_groups: list(include('overlay_network_attach_group', required=False))
+
+overlay_network:
+  name: str()
+  vrf_name: str(required=False)
+  vni: int(min=4096, max=1677215)
+  vlan_id: int(min=1, max=4094)
+  gw_ip_address: ip(version=4, required=False)
+  gw_ipv6_address: str(required=False)
+  mcast_group: ip(version=4, required=False)
+  attach_group: str(required=False)
+
+overlay_network_attach_group:
+  name: str()
+  switches: list(include('overlay_network_attach_group_switch'), required=False)
+
+overlay_network_attach_group_switch:
+  node_id: int()
+  ports: list(any(regex(r'^(?:e|eth(?:ernet)?)\d(?:\/\d+){1,2}$', ignore_case=True), regex(r'(?i)^(po|port-channel)([1-9]|[1-9][0-9]{1,3}|[1-3][0-9]{3}|40([0-8][0-9]|9[0-6]))$')), required=False)

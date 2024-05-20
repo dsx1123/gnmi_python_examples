@@ -1,0 +1,5 @@
+pygnmi==0.8.13
+PyYAML==5.3.1
+iac-validate==0.2.4
+dicttoxml==1.7.16
+jinja2==3.1.2

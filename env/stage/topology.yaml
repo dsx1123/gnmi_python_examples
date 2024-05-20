@@ -1,0 +1,19 @@
+fabric:
+  topology:
+    switches:
+      - name: spine1
+        node_id: 101
+        role: spine
+        management_ipv4_address: 192.168.123.104
+      - name: leaf1
+        node_id: 1001
+        role: leaf
+        management_ipv4_address: 192.168.123.101
+      - name: leaf2
+        node_id: 1002
+        role: leaf
+        management_ipv4_address: 192.168.123.102
+      - name: border1
+        node_id: 1003
+        role: border
+        management_ipv4_address: 192.168.123.103

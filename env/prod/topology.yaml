@@ -1,0 +1,19 @@
+fabric:
+  topology:
+    switches:
+      - name: 93180YC-FX-SP1-S1
+        node_id: 101
+        role: spine
+        management_ipv4_address: 172.31.186.160
+      - name: 93180YC-FX3S-L1-S1
+        node_id: 1001
+        role: leaf
+        management_ipv4_address: 172.31.217.103
+      - name: 93180YC-FX3S-L2-S1
+        node_id: 1002
+        role: leaf
+        management_ipv4_address: 172.31.217.101
+      - name: 93600CD-GX-BGW1-S1
+        node_id: 1003
+        role: border
+        management_ipv4_address: 172.31.186.156
